@@ -1,4 +1,4 @@
-# crunchyroll-wihtout-temp ![GitHub version](https://img.shields.io/badge/Version-1.0-blue)
+# crunchyroll-wihtout-temp ![GitHub version](https://img.shields.io/badge/Version-2.0-blue)
 [![GitHub issues](https://img.shields.io/github/issues/flolep2607/crunchyroll-wihtout-temp)](https://github.com/flolep2607/crunchyroll-wihtout-temp/issues)
 [![GitHub forks](https://img.shields.io/github/forks/flolep2607/crunchyroll-wihtout-temp)](https://github.com/flolep2607/crunchyroll-wihtout-temp/network)
 [![GitHub stars](https://img.shields.io/github/stars/flolep2607/crunchyroll-wihtout-temp)](https://github.com/flolep2607/crunchyroll-wihtout-temp/stargazers)

@@ -23,4 +23,5 @@ optional arguments:
 ```
 ## INFO
 You need to have a cookie.txt next to your execution path to download premium episodes
+___
 [![asciicast](https://asciinema.org/a/342143.svg)](https://asciinema.org/a/342143)

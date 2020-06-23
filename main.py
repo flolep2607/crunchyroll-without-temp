@@ -9,45 +9,39 @@ import cloudscraper
 
 def getter(url):
     scraper = cloudscraper.create_scraper()
-    wb_page=scraper.get(url)
+    wb_page=scraper.get(url)#"https://www.crunchyroll.com/fr/tower-of-god/episode-11-underwater-hunt-part-one-794529").text
     if wb_page.ok:
         infos=wb_page.text.split("vilos.config.media = ")[1].split(";")[0]
         infos=json.loads(infos)["streams"]
-        best={}
-        regex = re.compile(r"#EXT-X-STREAM-INF:PROGRAM-ID=[0-9],BANDWIDTH=(?P<bandwidth>[0-9]+),RESOLUTION=(?P<resolution>[0-9x]+),FRAME-RATE=(?P<frames>[0-9\.]+),CODECS=\"avc[a-zA-Z0-9\.]+,mp4[a-zA-Z0-9\.]+\"\n(?P<url>.+)$",re.MULTILINE)
+        best=None
         for i in infos:
             if i["hardsub_lang"]=="frFR" and ".m3u8" in i["url"]:
-                tmp=requests.get(i["url"])
-                if tmp.ok:
-                    try:
-                        tempo=[m.groupdict() for m in regex.finditer(tmp.text)]
-                        for arg in tempo:
-                            # arg=re.search(tmp.text,re.MULTILINE).groupdict()
-                            # print(arg)
-                            arg["resolution"]=[int(r) for r in arg["resolution"].split("x")]
-                            if not best or best["resolution"][0]<arg["resolution"][0]:
+                tmp=m3u8.load(i["url"])
+                for arg in tmp.playlists:
+                    # arg=re.search(tmp.text,re.MULTILINE).groupdict()
+                    # print(arg)
+                    if not best or best.stream_info.resolution[0]<arg.stream_info.resolution[0]:
+                        best=arg
+                    elif best.stream_info.resolution[0]==arg.stream_info.resolution[0]:
+                        if best.stream_info.resolution[1]<arg.stream_info.resolution[1]:
+                            best=arg
+                        elif best.stream_info.resolution[1]==arg.stream_info.resolution[1]:
+                            if best.stream_info.frame_rate<arg.stream_info.frame_rate:
                                 best=arg
-                            elif best["resolution"][0]==arg["resolution"][0]:
-                                if best["resolution"][1]<arg["resolution"][1]:
+                            elif best.stream_info.frame_rate==arg.stream_info.frame_rate:
+                                if  best.stream_info.bandwidth<arg.stream_info.bandwidth:
                                     best=arg
-                                elif best["resolution"][1]==arg["resolution"][1]:
-                                    if float(best["frames"])<float(arg["frames"]):
-                                        best=arg
-                                    elif float(best["frames"])==float(arg["frames"]):
-                                        if  int(best["bandwidth"])<int(arg["bandwidth"]):
-                                            best=arg
-                    except:
-                        pass
         return best
-    raise "Error on requests"
+    raise "Error"
+
 
 def main(infos,outfile,username=None,password=None):
     print("\033[1m"+"╔"+"═"*40+"╗")
-    print("║"+("Resolution: "+str(infos["resolution"][0])+"x"+str(infos["resolution"][1])).ljust(40)+"║")
-    print("║"+("Framerate:  "+str(infos["frames"])).ljust(40)+"║")
-    print("║"+("Bandwidth:  "+str(infos["bandwidth"])).ljust(40)+"║")
+    print("║"+("Resolution: "+str(infos.stream_info.resolution[0])+"x"+str(infos.stream_info.resolution[1])).ljust(40)+"║")
+    print("║"+("Framerate:  "+str(infos.stream_info.frame_rate)).ljust(40)+"║")
+    print("║"+("Bandwidth:  "+str(infos.stream_info.bandwidth)).ljust(40)+"║")
     print("╚"+"═"*40+"╝"+ "\033[0m")
-    r=m3u8.load(infos["url"])
+    r=m3u8.load(infos.uri)
     key=requests.get(r.keys[0].uri).content
     n=1
     with open(outfile,"wb") as output_file:
@@ -60,6 +54,8 @@ def main(infos,outfile,username=None,password=None):
             n+=1
 
 parser = argparse.ArgumentParser()
+# parser.add_argument("-l", "--link"    , type=str, help="link")
+# parser.add_argument("-o", "--out"     ,type=str, help="output file")
 parser.add_argument("l", type=str, help="link")
 parser.add_argument("o", type=str, help="output file")
 parser.add_argument("-u", "--username", type=str, help="username", default=None)#,required=False)

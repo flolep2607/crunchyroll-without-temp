@@ -17,8 +17,7 @@ def main(url,outfile,username=None,password=None):
         "skip_download":True,
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        # ydl.download(["https://www.crunchyroll.com/fr/tower-of-god/episode-11-underwater-hunt-part-one-794529"])
-        tmp=ydl.extract_info(url)#"https://www.crunchyroll.com/fr/tower-of-god/episode-11-underwater-hunt-part-one-794529",download=False)
+        tmp=ydl.extract_info(url,download=False)
         tempo=["",0]
         for i in tmp.get("formats"):
             if tempo[1]<i.get("width"):
@@ -40,9 +39,9 @@ def main(url,outfile,username=None,password=None):
             n+=1
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-l", help="link")
-parser.add_argument("-o", help="output file")
-parser.add_argument("-u", help="username")#,required=False)
-parser.add_argument("-p", help="password")#,required=False)
+parser.add_argument("l", type=str, help="link")
+parser.add_argument("o", type=str, help="output file")
+parser.add_argument("-u", "--username", type=str, help="username", default=None)#,required=False)
+parser.add_argument("-p", "--password", type=str, help="password", default=None)#,required=False)
 args = parser.parse_args()
-main(args.l,args.o,args.u,args.p)
+main(args.l,args.o,args.username,args.password)

@@ -1,4 +1,4 @@
-# crunchyroll-wihtout-temp ![GitHub version](https://img.shields.io/badge/Version-2.1-blue)
+# crunchyroll-wihtout-temp ![GitHub version](https://img.shields.io/badge/Version-3.0-blue)
 [![GitHub issues](https://img.shields.io/github/issues/flolep2607/crunchyroll-wihtout-temp)](https://github.com/flolep2607/crunchyroll-wihtout-temp/issues)
 [![GitHub forks](https://img.shields.io/github/forks/flolep2607/crunchyroll-wihtout-temp)](https://github.com/flolep2607/crunchyroll-wihtout-temp/network)
 [![GitHub stars](https://img.shields.io/github/stars/flolep2607/crunchyroll-wihtout-temp)](https://github.com/flolep2607/crunchyroll-wihtout-temp/stargazers)
@@ -12,7 +12,7 @@ I also modified the writing, now it doesn't crete any temp file, it's slower but
 `py main.py https://www.crunchyroll.com/fr/tower-of-god/episode-11-underwater-hunt-part-one-794529 TOG11.mp4`
 ___
 ```
-usage: main.py [-h] [-u USERNAME] [-p PASSWORD] link output_file
+usage: main.py [-h] link output_file
 
 positional arguments:
   l                     link
@@ -20,6 +20,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -u USERNAME, --username USERNAME
-  -p PASSWORD, --password PASSWORD
 ```
+## INFO
+You need to have a cookie.txt next to your execution path to download premium episodes
+[![asciicast](https://asciinema.org/a/342143.svg)](https://asciinema.org/a/342143)

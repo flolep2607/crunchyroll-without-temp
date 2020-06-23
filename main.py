@@ -49,16 +49,24 @@ class NotPremiumError(ValueError):
         self.strerror = arg
         self.args = {arg}
 
-def getter(url):
+def getter(url,cookie_file=None):
     scraper = cloudscraper.create_scraper(browser='chrome')
-    if exists("cookies.txt"):
+    if cookie_file:
+        cj=cookiejar.MozillaCookieJar(cookie_file)
+        cj.load()
+        cookie_remover(cj,"OptanonControl")
+        cookie_remover(cj,"__cfduid")
+        cookie_remover(cj,"c_visitor")
+        scraper.cookies=cj
+        print("Cookies miam🍪.. Loaded")
+    elif exists("cookies.txt"):
         cj=cookiejar.MozillaCookieJar("cookies.txt")
         cj.load()
         cookie_remover(cj,"OptanonControl")
         cookie_remover(cj,"__cfduid")
         cookie_remover(cj,"c_visitor")
-        print("Cookies miam🍪.. Loaded")
         scraper.cookies=cj
+        print("Cookies miam🍪.. Loaded")
     wb_page=scraper.get(url)
     if wb_page.ok:
         if "showmedia-trailer-notice" in wb_page.text:
@@ -69,8 +77,6 @@ def getter(url):
         for i in infos:
             if i["hardsub_lang"]=="frFR" and ".m3u8" in i["url"]:
                 tmp=m3u8.load(i["url"])
-                print("==============")
-                print(tmp.data)
                 if tmp.playlists:
                     for arg in tmp.playlists:
                         if not best or best.stream_info.resolution[0]<arg.stream_info.resolution[0]:
@@ -84,18 +90,11 @@ def getter(url):
                                 elif best.stream_info.frame_rate==arg.stream_info.frame_rate:
                                     if  best.stream_info.bandwidth<arg.stream_info.bandwidth:
                                         best=arg
-                else:
-                    print("Oh that's a recent airing anime")
-                    return i["url"]
         return best
     raise NotPremiumError("Error")
 
 
 def main(infos,outfile,username=None,password=None):
-    print("======================")
-    print(infos)
-    print(type(infos))
-    print("======================")
     if "stream_info" in dir(infos):
         print("\033[1m"+"╔"+"═"*40+"╗")
         print("║"+("Resolution: "+str(infos.stream_info.resolution[0])+"x"+str(infos.stream_info.resolution[1])).ljust(40)+"║")
@@ -116,13 +115,17 @@ def main(infos,outfile,username=None,password=None):
         raise Exception("Not Premium")
         
 
+def is_valid_file(parser, arg):
+    if not exists(arg):
+        parser.error("The cookie file %s does not exist!" % arg)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("l", type=str, help="link")
 parser.add_argument("o", type=str, help="output file")
+parser.add_argument("-c", "--cookies", type=is_valid_file, help="cookie file path", default=None)
 args = parser.parse_args()
 try:
-    main(getter(args.l),args.o)
+    main(getter(args.l,args.cookies),args.o)
 except NotPremiumError:
     print("\033[1m"+"╔"+"═"*60+"╗")
     print("║"+"Humm something happen do you have Crunchy Premium?".center(60)+"║")

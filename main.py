@@ -44,7 +44,13 @@ def cookie_remover(cj,name):
     try:cj.clear(domain=".crunchyroll.com",path="/",name=name)
     except:pass
 
+class NotPremiumError(ValueError):
+    def __init__(self, arg):
+        self.strerror = arg
+        self.args = {arg}
+
 def getter(url):
+    scraper = cloudscraper.create_scraper(browser='chrome')
     if exists("cookies.txt"):
         cj=cookiejar.MozillaCookieJar("cookies.txt")
         cj.load()
@@ -52,20 +58,17 @@ def getter(url):
         cookie_remover(cj,"__cfduid")
         cookie_remover(cj,"c_visitor")
         print("Cookies miam🍪.. Loaded")
-    # session.cookies=cj #when add cookie can't bypass cloudflare
-    scraper = cloudscraper.create_scraper(browser='chrome')#sess=session)
-    scraper.cookies=cj
+        scraper.cookies=cj
     wb_page=scraper.get(url)
     if wb_page.ok:
         if "showmedia-trailer-notice" in wb_page.text:
-            raise Exception("Your are not premium")
+            raise NotPremiumError("Not Premium")
         infos=wb_page.text.split("vilos.config.media = ")[1].split(";")[0]
         infos=json.loads(infos)["streams"]
         best=None
         for i in infos:
             if i["hardsub_lang"]=="frFR" and ".m3u8" in i["url"]:
                 tmp=m3u8.load(i["url"])
-                # tmp=m3u8.loads(scraper.get(i["url"]).text)
                 print("==============")
                 print(tmp.data)
                 if tmp.playlists:
@@ -85,7 +88,7 @@ def getter(url):
                     print("Oh that's a recent airing anime")
                     return i["url"]
         return best
-    raise Exception("Error")
+    raise NotPremiumError("Error")
 
 
 def main(infos,outfile,username=None,password=None):
@@ -110,13 +113,17 @@ def main(infos,outfile,username=None,password=None):
                     output_file.write(cipher_encrypt.decrypt(part))
                 print(progress_bar.update(),end="\r")
     else:
-        print("\033[1m"+"╔"+"═"*40+"╗")
-        print("║"+"Humm something happen have you crunchy premium?".ljust(40)+"║")
-        print("╚"+"═"*40+"╝"+ "\033[0m")
+        raise Exception("Not Premium")
+        
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("l", type=str, help="link")
 parser.add_argument("o", type=str, help="output file")
 args = parser.parse_args()
-main(getter(args.l),args.o)
+try:
+    main(getter(args.l),args.o)
+except NotPremiumError:
+    print("\033[1m"+"╔"+"═"*60+"╗")
+    print("║"+"Humm something happen do you have Crunchy Premium?".center(60)+"║")
+    print("╚"+"═"*60+"╝"+ "\033[0m")

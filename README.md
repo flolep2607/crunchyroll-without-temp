@@ -12,7 +12,7 @@ I also modified the writing, now it doesn't crete any temp file, it's slower but
 `py main.py https://www.crunchyroll.com/fr/tower-of-god/episode-11-underwater-hunt-part-one-794529 TOG11.mp4`
 ___
 ```
-usage: main.py [-h] [-u USERNAME] [-p PASSWORD] l o
+usage: main.py [-h] [-u USERNAME] [-p PASSWORD] link output_file
 
 positional arguments:
   l                     link

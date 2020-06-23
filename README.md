@@ -1,0 +1,20 @@
+# crunchyroll-wihtout-temp
+#### WHY THIS SCRIPT
+Because I had some issues with the youtube-dl script when the download started, and I like do all by myself.
+I also modified the writing, now it doesn't crete any temp file, it's slower but nwm.
+
+#### Command exemple:
+`py main.py https://www.crunchyroll.com/fr/tower-of-god/episode-11-underwater-hunt-part-one-794529 TOG11.mp4`
+___
+```
+usage: main.py [-h] [-u USERNAME] [-p PASSWORD] l o
+
+positional arguments:
+  l                     link
+  o                     output file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USERNAME, --username USERNAME
+  -p PASSWORD, --password PASSWORD
+```
